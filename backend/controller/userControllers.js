@@ -1,59 +1,59 @@
-const Users = require("../models/Users");
-require("dotenv").config();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const Users = require('../models/Users')
+require('dotenv').config()
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await Users.find();
+    const users = await Users.find()
     return res.status(200).send({
       success: true,
-      message: "Users fetched successfully",
-      users: users,
-    });
+      message: 'Users fetched successfully',
+      users
+    })
   } catch (error) {
     return res.status(400).send({
       success: false,
-      message: error,
-    });
+      message: error
+    })
   }
-};
+}
 
 const getUserById = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req.params.id
     if (!id) {
       return res.status(200).send({
         success: false,
-        message: "Id is required!",
+        message: 'Id is required!',
         data: null
-      });
+      })
     }
-    const user = await Users.findOne({ _id: id });
+    const user = await Users.findOne({ _id: id })
     if (user) {
       return res.status(200).send({
         success: true,
-        message: "User fetched successfully",
-        data: user,
-      });
+        message: 'User fetched successfully',
+        data: user
+      })
     } else {
       return res.status(200).send({
         success: false,
-        message: "Please enter valid id",
-      });
+        message: 'Please enter valid id'
+      })
     }
   } catch (error) {
     return res.status(500).send({
       success: false,
       message: error,
       data: null
-    });
+    })
   }
-};
+}
 
 const signup = async (req, res) => {
   try {
-    const { name, email, mobileNumber, address, idProof, password } = req.body;
+    const { name, email, mobileNumber, address, idProof, password } = req.body
     if (![name, email, mobileNumber, password].every(Boolean)) {
       return res.status(400).send({
         success: false,
@@ -62,42 +62,42 @@ const signup = async (req, res) => {
       })
     }
 
-    const userExist = await Users.findOne({ email: email, mobileNumber: mobileNumber });
+    const userExist = await Users.findOne({ email, mobileNumber })
     if (userExist) {
       return res.status(401).send({
         success: false,
-        message: "User already exists!"
+        message: 'User already exists!'
       })
     }
-    const hashPassword = await bcrypt.hash(password, 10);
+    const hashPassword = await bcrypt.hash(password, 10)
 
     const newUser = new Users({
-      name: name,
-      mobileNumber: mobileNumber,
+      name,
+      mobileNumber,
       password: hashPassword,
       idProof: idProof || null,
       address: address || null,
-      email: email
+      email
     })
     await newUser.save()
     return res.status(201).json({
-      message: "User registered successfully",
+      message: 'User registered successfully',
       success: true,
       data: newUser
     })
   } catch (error) {
-    console.log('error', error);
+    console.log('error', error)
     return res.status(400).send({
       success: false,
       message: error,
       data: null
-    });
+    })
   }
 }
 
 const login = async (req, res) => {
   try {
-    const { email, password, mobileNumber } = req.body;
+    const { email, password } = req.body
     if (![email, password].every(Boolean)) {
       return res.status(400).send({
         success: false,
@@ -105,7 +105,7 @@ const login = async (req, res) => {
         data: null
       })
     }
-    await Users.findOne({ email: email }).then(async (userData) => {
+    await Users.findOne({ email }).then(async (userData) => {
       if (!userData) {
         return res.status(401).send({
           success: false,
@@ -113,34 +113,33 @@ const login = async (req, res) => {
           data: null
         })
       }
-      console.log('user',userData);
-      console.log('password',password);
-      console.log('userData?.password',userData?.password);
+      console.log('user', userData)
+      console.log('password', password)
+      console.log('userData?.password', userData?.password)
 
       if (await bcrypt.compare(password, userData?.password)) {
-        const token = jwt.sign({ id: userData?._id }, "HOTEL_MANAGEMENT", { expiresIn: "1d" })
+        const token = jwt.sign({ id: userData?._id }, 'HOTEL_MANAGEMENT', { expiresIn: '1d' })
         return res.status(200).send({
           success: true,
-          message: "Login successfully.",
+          message: 'Login successfully.',
           data: userData,
           accessToken: token
         })
-      }
-      else {
+      } else {
         return res.status(401).send({
           success: false,
-          message: "Please enter valid password!",
+          message: 'Please enter valid password!',
           data: null
         })
       }
     })
   } catch (error) {
-    console.log('error', error);
+    console.log('error', error)
     return res.status(400).send({
       success: false,
-      message: error,
-    });
+      message: error
+    })
   }
 }
 
-module.exports = { getAllUsers, getUserById, signup, login };
+module.exports = { getAllUsers, getUserById, signup, login }

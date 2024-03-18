@@ -1,30 +1,30 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
 const roomSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    required: true
   },
   categoryId: {
     type: String,
-    required: true,
+    required: true
   },
   available: {
     type: Number,
-    required: true,
+    required: true
   },
   description: {
-    type: String,
+    type: String
   },
   status: {
     type: String,
-    required: true,
+    required: true
   },
   bookingStatus: {
     type: String,
-    required: true,
-  },
-});
+    required: true
+  }
+})
 
-const Rooms = mongoose.model("Rooms", roomSchema);
-module.exports = Rooms;
+const Rooms = mongoose.model('Rooms', roomSchema)
+module.exports = Rooms
