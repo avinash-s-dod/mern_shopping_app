@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/products", productRoutes);
 app.use("/api/rooms", roomRoutes);
-app.use("/api/users", userRoutes);
+app.use("/api/user", userRoutes);
 
 const PORT = process.env.port || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT} http://localhost:${PORT}`));

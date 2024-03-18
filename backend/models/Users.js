@@ -19,6 +19,10 @@ const UsersSchema = new mongoose.Schema({
   idProof: {
     type: String,
   },
+  password:{
+    type:String,
+    required:true
+  }
 });
 
 const Users = mongoose.model("Users", UsersSchema);
